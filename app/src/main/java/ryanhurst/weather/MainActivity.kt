@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWeather() {
         swipe_refresh_layout.isRefreshing = false
-
         val size = weather?.STATION?.size ?: 0
         if (size == 0) {
             empty_text_view.visibility = View.VISIBLE
@@ -91,24 +90,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         internal inner class WeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
             fun bind(station: WeatherResponse.Station) {
                 itemView.text_name.text = station.NAME
-
-                val elevationString = station.ELEVATION + "'"
+                val elevationString = "${station.ELEVATION}'"
                 itemView.text_elevation.text = elevationString
-
-                if (station.OBSERVATIONS?.air_temp_value_1 != null) {
-                    itemView.text_temperature.text = getTempString(station.OBSERVATIONS.air_temp_value_1.value)
-                    itemView.text_temperature.visibility = View.VISIBLE
-                } else {
-                    itemView.text_temperature.visibility = View.INVISIBLE
+                itemView.text_temperature.text = station.OBSERVATIONS?.air_temp_value_1?.value?.let {
+                    getTempString(it)
                 }
 
-                if (station.OBSERVATIONS?.wind_speed_value_1 != null) {
-                    var windString = ""
-                    if (station.OBSERVATIONS.wind_cardinal_direction_value_1d != null)
-                        windString += station.OBSERVATIONS.wind_cardinal_direction_value_1d.value
+                if (station.OBSERVATIONS?.wind_speed_value_1?.value != null) {
+                    var windString = station.OBSERVATIONS.wind_cardinal_direction_value_1d?.value ?: ""
                     windString += " " + getWindString(station.OBSERVATIONS.wind_speed_value_1.value)
                     itemView.text_wind_speed.text = windString
                     itemView.wind_speed_container.visibility = View.VISIBLE
@@ -116,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                     itemView.wind_speed_container.visibility = View.GONE
                 }
 
-                if (station.OBSERVATIONS?.wind_gust_value_1 != null) {
+                if (station.OBSERVATIONS?.wind_gust_value_1?.value != null) {
                     val gustString = getWindString(station.OBSERVATIONS.wind_gust_value_1.value)
                     itemView.text_wind_gust.text = gustString
                     itemView.wind_gust_container.visibility = View.VISIBLE

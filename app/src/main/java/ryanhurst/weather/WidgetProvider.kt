@@ -12,9 +12,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 /**
+ * AppWidgetProvider for a basic widget that displays information about a small amount of stations
  * Created by ryan on 1/9/17.
  */
-
 class WidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -37,21 +37,25 @@ class WidgetProvider : AppWidgetProvider() {
 
 
         fun updateView(response: WeatherResponse?) {
-            if (response?.STATION != null && response.STATION!!.size > 0) {
-                var station: WeatherResponse.Station = response.STATION!![0]
+            if (response?.STATION != null && response.STATION.size > 0) {
+                var station: WeatherResponse.Station = response.STATION[0]
                 views.setTextViewText(R.id.name_1, station.NAME)
-                if (station.OBSERVATIONS!!.air_temp_value_1 != null)
-                    views.setTextViewText(R.id.temperature_1, getTempString(station.OBSERVATIONS!!.air_temp_value_1!!.value))
-                if (station.OBSERVATIONS!!.wind_gust_value_1 != null)
-                    views.setTextViewText(R.id.wind_gust_1, getWindString(station.OBSERVATIONS!!.wind_gust_value_1!!.value))
+                station.OBSERVATIONS?.air_temp_value_1?.value?.let {
+                    views.setTextViewText(R.id.temperature_1, getTempString(it))
+                }
+                station.OBSERVATIONS?.wind_gust_value_1?.value?.let {
+                    views.setTextViewText(R.id.wind_gust_1, getWindString(it))
+                }
 
-                if (response.STATION!!.size > 1) {
-                    station = response.STATION!![1]
+                if (response.STATION.size > 1) {
+                    station = response.STATION[1]
                     views.setTextViewText(R.id.name_2, station.NAME)
-                    if (station.OBSERVATIONS!!.air_temp_value_1 != null)
-                        views.setTextViewText(R.id.temperature_2, getTempString(station.OBSERVATIONS!!.air_temp_value_1!!.value))
-                    if (station.OBSERVATIONS!!.wind_gust_value_1 != null)
-                        views.setTextViewText(R.id.wind_gust_2, getWindString(station.OBSERVATIONS!!.wind_gust_value_1!!.value))
+                    station.OBSERVATIONS?.air_temp_value_1?.value?.let {
+                        views.setTextViewText(R.id.temperature_2, getTempString(it))
+                    }
+                    station.OBSERVATIONS?.wind_gust_value_1?.value?.let {
+                        views.setTextViewText(R.id.wind_gust_2, getWindString(it))
+                    }
                 }
 
                 // Tell the AppWidgetManager to perform an update on the current app widget

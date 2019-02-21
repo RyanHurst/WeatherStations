@@ -3,6 +3,7 @@ package ryanhurst.weather
 import java.util.ArrayList
 
 /**
+ * WeatherResponse object. Holds station data
  * Created by ryan on 1/8/17.
  */
  // todo implement parcelable

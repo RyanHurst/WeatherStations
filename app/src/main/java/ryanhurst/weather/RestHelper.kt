@@ -5,9 +5,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
+ * Utility extension functions
  * Created by ryan on 1/9/17.
  */
-
 private fun createRestService() : Network {
     val retrofit = Retrofit.Builder()
         .baseUrl("http://api.mesowest.net/v2/")
@@ -35,18 +35,18 @@ fun getSimpleConditions(callback: Callback<WeatherResponse>, stations: Array<Str
         .enqueue(callback)
 }
 
-fun getTempString(temperatureCelsius: Double?): String {
+fun getTempString(temperatureCelsius: Double): String {
     return celsiusToFahrenheit(temperatureCelsius).toInt().toString() + "°F"
 }
 
-fun getWindString(windGustMs: Double?): String {
+fun getWindString(windGustMs: Double): String {
     return msToMph(windGustMs).toInt().toString() + " mph"
 }
 
-fun celsiusToFahrenheit(celsius: Double?): Double {
-    return Math.round(celsius!! * 1.8 + 32).toDouble()
+fun celsiusToFahrenheit(celsius: Double): Double {
+    return Math.round(celsius * 1.8 + 32).toDouble()
 }
 
-fun msToMph(ms: Double?): Double {
-    return Math.round(2.237 * ms!!).toDouble()
+fun msToMph(ms: Double): Double {
+    return Math.round(2.237 * ms).toDouble()
 }
