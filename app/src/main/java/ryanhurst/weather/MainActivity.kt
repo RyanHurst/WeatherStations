@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         swipe_refresh_layout.setOnRefreshListener { getWeather() }
+        swipe_refresh_layout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorPrimary)
+        swipe_refresh_layout.setDistanceToTriggerSync(600)
 
         recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
