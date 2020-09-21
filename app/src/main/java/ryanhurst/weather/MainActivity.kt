@@ -4,72 +4,42 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.weather_row.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  * Main activity to display a list of station information
  */
 class MainActivity : AppCompatActivity() {
-    private var weather: WeatherResponse? = null
+    private val model: WeatherViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        model.weatherLiveData.observe(this) { showWeather(it) }
         swipe_refresh_layout.setOnRefreshListener { getWeather() }
         swipe_refresh_layout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorPrimary)
         swipe_refresh_layout.setDistanceToTriggerSync(600)
-
         recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-
-        weather = savedInstanceState?.getString(WEATHER_KEY, null)?.run {
-            Gson().fromJson(this, WeatherResponse::class.java)
+        if (savedInstanceState == null) {
+            getWeather()
         }
-        if (weather == null) getWeather() else showWeather()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(WEATHER_KEY, Gson().toJson(weather))
     }
 
     private fun getWeather() {
         empty_text_view.visibility = View.GONE
         swipe_refresh_layout.isRefreshing = true
-
-        getWeather(object : Callback<WeatherResponse> {
-            override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
-                Log.d("main", "Retrieved station information")
-                weather = response.body()
-                showWeather()
-            }
-
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                Log.e("main", "Failed to retrieve station information. ${t.message}", t)
-                weather = null
-                showWeather()
-            }
-        }, STATIONS_ARRAY)
+        model.getWeather2(STATIONS_ARRAY)
     }
 
-    private fun showWeather() {
+    private fun showWeather(weatherResponse: WeatherResponse?) {
         swipe_refresh_layout.isRefreshing = false
-        val size = weather?.STATION?.size ?: 0
-        if (size == 0) {
-            empty_text_view.visibility = View.VISIBLE
-        } else {
-            empty_text_view.visibility = View.GONE
-        }
-
-        recycler_view.adapter = WeatherAdapter(weather)
+        empty_text_view.visibility = if (weatherResponse?.STATION.isNullOrEmpty()) View.VISIBLE else View.GONE
+        recycler_view.adapter = WeatherAdapter(weatherResponse)
     }
 
     internal inner class WeatherAdapter(private val weatherResponse: WeatherResponse?) :
@@ -118,9 +88,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    companion object {
-        private const val WEATHER_KEY = "weather"
     }
 }
