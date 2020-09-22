@@ -1,5 +1,6 @@
 package ryanhurst.weather
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.weather_row.view.*
  */
 class MainActivity : AppCompatActivity() {
     private val model: WeatherViewModel by viewModels()
+    private val SETTINGS_RESULT = 1337
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +30,21 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState ?: getWeather()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            getWeather()
+        }
+    }
+
+    private fun openSettings() {
+        startActivityForResult(Intent(this, SettingsActivity::class.java), SETTINGS_RESULT)
+    }
+
     private fun getWeather() {
         empty_text_view.visibility = View.GONE
         swipe_refresh_layout.isRefreshing = true
-        model.getWeather2(STATIONS_ARRAY)
+        model.load(STATIONS_ARRAY)
     }
 
     private fun showWeather(weatherResponse: WeatherResponse?) {

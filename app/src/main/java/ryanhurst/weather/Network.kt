@@ -15,7 +15,7 @@ const val WIND_CARDINAL_DIRECTION = "wind_cardinal_direction"
 
 interface Network {
     @GET("stations/nearesttime")
-    suspend fun getWeatherK(
+    suspend fun getWeather(
         @Query("stid") stid: Array<String>,
         @Query("token") token: String, @Query("within") within: String,
         @Query("vars") vars: Array<String>

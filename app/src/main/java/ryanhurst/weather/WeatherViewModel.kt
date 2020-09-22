@@ -8,7 +8,7 @@ import okio.IOException
 
 class WeatherViewModel: ViewModel() {
     val weatherLiveData = MutableLiveData<WeatherResponse>()
-    fun getWeather2(stations: Array<String>) {
+    fun load(stations: Array<String>) {
         viewModelScope.launch {
             try {
                 weatherLiveData.postValue(getWeather(stations))

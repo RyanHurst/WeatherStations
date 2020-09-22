@@ -25,7 +25,7 @@ private fun createRestService() : Network {
 }
 
 suspend fun getWeather(stations: Array<String>): WeatherResponse {
-    return createRestService().getWeatherK(
+    return createRestService().getWeather(
         stations,
         TOKEN,
         "120",
@@ -34,25 +34,10 @@ suspend fun getWeather(stations: Array<String>): WeatherResponse {
 }
 
 suspend fun getSimpleConditions(stations: Array<String>): WeatherResponse {
-    return createRestService().getWeatherK(
+    return createRestService().getWeather(
         stations,
         TOKEN,
         "120",
         arrayOf(AIR_TEMP, WIND_GUST)
     )
-}
-
-fun getTempString(temperatureCelsius: Double): String {
-    return celsiusToFahrenheit(temperatureCelsius).toInt().toString() + "°F"
-}
-
-fun getWindString(windGustMs: Double): String {
-    return msToMph(windGustMs).toInt().toString() + " mph"
-}
-
-fun celsiusToFahrenheit(celsius: Double): Double {
-    return Math.round(celsius * 1.8 + 32).toDouble()
-}
-fun msToMph(ms: Double): Double {
-    return Math.round(2.237 * ms).toDouble()
 }
