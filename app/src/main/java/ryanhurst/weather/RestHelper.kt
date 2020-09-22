@@ -2,7 +2,6 @@ package ryanhurst.weather
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -34,15 +33,13 @@ suspend fun getWeather(stations: Array<String>): WeatherResponse {
     )
 }
 
-// TODO: 9/20/2020 update this
-fun getSimpleConditions(callback: Callback<WeatherResponse>, stations: Array<String>) {
-    createRestService().getWeather(
+suspend fun getSimpleConditions(stations: Array<String>): WeatherResponse {
+    return createRestService().getWeatherK(
         stations,
         TOKEN,
         "120",
         arrayOf(AIR_TEMP, WIND_GUST)
     )
-        .enqueue(callback)
 }
 
 fun getTempString(temperatureCelsius: Double): String {
@@ -53,7 +50,6 @@ fun getWindString(windGustMs: Double): String {
     return msToMph(windGustMs).toInt().toString() + " mph"
 }
 
-// TODO: 9/20/2020 update these to use string format
 fun celsiusToFahrenheit(celsius: Double): Double {
     return Math.round(celsius * 1.8 + 32).toDouble()
 }

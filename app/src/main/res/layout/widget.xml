@@ -19,9 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="start"
-            android:singleLine="true"
+            android:lines="2"
             android:textColor="@android:color/white"
-            android:textSize="12sp"
+            android:textSize="10sp"
             tools:text="BASE" />
 
         <TextView
@@ -41,7 +41,6 @@
             android:maxLines="1"
             android:textColor="@android:color/white"
             tools:text="69mph" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -53,13 +52,13 @@
 
         <TextView
             android:id="@+id/name_2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="start"
+            android:lines="2"
             android:textColor="@android:color/white"
-            android:textSize="12sp"
-            tools:text="Strawberry"
-            android:singleLine="true" />
+            android:textSize="10sp"
+            tools:text="BASE" />
 
         <TextView
             android:id="@+id/temperature_2"

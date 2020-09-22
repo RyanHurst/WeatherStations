@@ -5,11 +5,10 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.RemoteViews
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okio.IOException
 
 /**
  * AppWidgetProvider for a basic widget that displays information about a small amount of stations
@@ -27,7 +26,7 @@ class WidgetProvider : AppWidgetProvider() {
 
         val views = RemoteViews(context.packageName, R.layout.widget)
 
-        // Create an Intent to launch ExampleActivity
+        // Create an Intent to launch MainActivity
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
@@ -63,16 +62,13 @@ class WidgetProvider : AppWidgetProvider() {
             }
         }
 
-        getSimpleConditions(object: Callback<WeatherResponse> {
-            override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
-                Log.d("main", "success!")
-                updateView(response.body())
-            }
-
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                Log.e("main", "failure!", t)
+        GlobalScope.launch {
+            try {
+                val weatherResponse = getSimpleConditions(SHORT_STATIONS_ARRAY)
+                updateView(weatherResponse)
+            } catch (e: IOException) {
                 updateView(null)
             }
-        }, SHORT_STATIONS_ARRAY)
+        }
     }
 }

@@ -1,6 +1,5 @@
 package ryanhurst.weather
 
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -15,16 +14,10 @@ const val WIND_DIRECTION = "wind_direction"
 const val WIND_CARDINAL_DIRECTION = "wind_cardinal_direction"
 
 interface Network {
-
-    // TODO: 9/21/2020 remove this one
     @GET("stations/nearesttime")
-    fun getWeather(@Query("stid") stid: Array<String>,
-                   @Query("token") token: String, @Query("within") within: String,
-                   @Query("vars") vars: Array<String>): Call<WeatherResponse>
-
-    @GET("stations/nearesttime")
-    suspend fun getWeatherK(@Query("stid") stid: Array<String>,
-                   @Query("token") token: String, @Query("within") within: String,
-                   @Query("vars") vars: Array<String>): WeatherResponse
-
+    suspend fun getWeatherK(
+        @Query("stid") stid: Array<String>,
+        @Query("token") token: String, @Query("within") within: String,
+        @Query("vars") vars: Array<String>
+    ): WeatherResponse
 }
