@@ -2,13 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ryanhurst.weather">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingsActivity"></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:description="@string/settings"
+            android:label="@string/settings" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +33,5 @@
                 android:resource="@xml/widget" />
         </receiver>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

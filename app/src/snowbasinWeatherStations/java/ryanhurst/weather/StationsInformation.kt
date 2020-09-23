@@ -4,14 +4,15 @@ package ryanhurst.weather
  * Station information for Snowbasin
  * Created by ryan on 2/20/17.
  */
-private const val STRAWBERRY_TOP = "SB2"
-private const val BASE = "SBE"
-private const val OGDEN_PEAK = "OGP"
-private const val BOARDWALK = "SBBWK"
-private const val WILDCAT = "SWI"
-private const val MIDDLE_BOWL = "SNI"
-private const val STRAWBERRY_TOWER_15 = "SBT15"
-private const val TRAPPERS = "TPR"
+private val STRAWBERRY_TOP = StationName("Strawberry Top","SB2")
+private val BASE = StationName("Base","SBE")
+private val OGDEN_PEAK = StationName("Ogden Peak","OGP")
+private val BOARDWALK = StationName("Boardwalk","SBBWK")
+private val WILDCAT = StationName("Wildcat","SWI")
+private val MIDDLE_BOWL = StationName("Middle Bowl","SNI")
+private val STRAWBERRY_TOWER_15 = StationName("Strawberry Tower 15","SBT15")
+private val TRAPPERS = StationName("Trapper's Loop","TPR")
 
-val STATIONS_ARRAY = arrayOf(STRAWBERRY_TOP, BASE, OGDEN_PEAK, BOARDWALK, MIDDLE_BOWL, STRAWBERRY_TOWER_15, TRAPPERS, WILDCAT)
-val SHORT_STATIONS_ARRAY = arrayOf(STRAWBERRY_TOP, BASE, BOARDWALK)
+val STATIONS_LIST_DEFAULT = listOf(STRAWBERRY_TOP, BASE, OGDEN_PEAK, MIDDLE_BOWL)
+val STATIONS_LIST = listOf(STRAWBERRY_TOP, BASE, OGDEN_PEAK, BOARDWALK, MIDDLE_BOWL, STRAWBERRY_TOWER_15, TRAPPERS, WILDCAT)
+val SHORT_STATIONS_LIST = listOf(STRAWBERRY_TOP, BASE, BOARDWALK)

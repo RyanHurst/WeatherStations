@@ -64,7 +64,7 @@ class WidgetProvider : AppWidgetProvider() {
 
         GlobalScope.launch {
             try {
-                val weatherResponse = getSimpleConditions(SHORT_STATIONS_ARRAY)
+                val weatherResponse = getSimpleConditions(SHORT_STATIONS_LIST.map { it.id })
                 updateView(weatherResponse)
             } catch (e: IOException) {
                 updateView(null)

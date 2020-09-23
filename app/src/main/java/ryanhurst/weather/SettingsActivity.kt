@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.settings_row.view.*
 
@@ -20,7 +20,8 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         stationPreferences.addAll(getStationPreferences(this))
         settings_recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        recycler_view.adapter = SettingsAdapter()
+        settings_recycler.adapter = SettingsAdapter()
+        setResult(RESULT_CANCELED)
     }
 
     internal inner class SettingsAdapter : RecyclerView.Adapter<StationViewHolder>() {
@@ -36,7 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         override fun getItemCount(): Int {
-            return STATIONS_ARRAY.size
+            return STATIONS_LIST.size
         }
     }
 
@@ -44,16 +45,17 @@ class SettingsActivity : AppCompatActivity() {
         var station : StationPreference? = null
 
         init {
-            itemView.station_box.setOnCheckedChangeListener { _, isChecked  ->
-                station?.enabled = isChecked
+            itemView.station_box.setOnClickListener {
+                station?.enabled = (it as CompoundButton).isChecked
                 setResult(RESULT_OK)
+                setStationPreferences(this@SettingsActivity, stationPreferences)
             }
         }
 
         fun bind(station: StationPreference) {
             this.station = station
-            itemView.station_box.text = station.name
-            itemView.station_box.isEnabled = station.enabled
+            itemView.station_box.text = station.displayableName
+            itemView.station_box.isChecked = station.enabled
         }
     }
 }

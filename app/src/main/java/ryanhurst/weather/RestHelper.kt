@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 private fun createRestService() : Network {
     val logging = HttpLoggingInterceptor()
-    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+    logging.setLevel(HttpLoggingInterceptor.Level.BODY)
     val client: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
         .build()
@@ -24,20 +24,20 @@ private fun createRestService() : Network {
     return retrofit.create(Network::class.java)
 }
 
-suspend fun getWeather(stations: Array<String>): WeatherResponse {
+suspend fun getWeather(stations: List<String>): WeatherResponse {
     return createRestService().getWeather(
         stations,
         TOKEN,
         "120",
-        arrayOf(AIR_TEMP, WIND_SPEED, WIND_GUST, WIND_CARDINAL_DIRECTION)
+        listOf(AIR_TEMP, WIND_SPEED, WIND_GUST, WIND_CARDINAL_DIRECTION)
     )
 }
 
-suspend fun getSimpleConditions(stations: Array<String>): WeatherResponse {
+suspend fun getSimpleConditions(stations: List<String>): WeatherResponse {
     return createRestService().getWeather(
         stations,
         TOKEN,
         "120",
-        arrayOf(AIR_TEMP, WIND_GUST)
+        listOf(AIR_TEMP, WIND_GUST)
     )
 }

@@ -3,4 +3,6 @@
     <string name="wind_speed">Wind speed</string>
     <string name="max_gust">Max wind gust</string>
     <string name="no_items_found">No items found</string>
+    <string name="settings">Settings</string>
+    <string name="enabled_stations">Enabled Stations</string>
 </resources>

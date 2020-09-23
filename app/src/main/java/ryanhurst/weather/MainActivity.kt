@@ -3,21 +3,20 @@ package ryanhurst.weather
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.weather_row.view.*
+private const val SETTINGS_REQUEST = 1337
 
 /**
  * Main activity to display a list of station information
  */
 class MainActivity : AppCompatActivity() {
     private val model: WeatherViewModel by viewModels()
-    private val SETTINGS_RESULT = 1337
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,21 +29,35 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState ?: getWeather()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_weather, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.settings) {
+            openSettings()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && requestCode == SETTINGS_REQUEST) {
             getWeather()
         }
     }
 
     private fun openSettings() {
-        startActivityForResult(Intent(this, SettingsActivity::class.java), SETTINGS_RESULT)
+        startActivityForResult(Intent(this, SettingsActivity::class.java), SETTINGS_REQUEST)
     }
 
     private fun getWeather() {
         empty_text_view.visibility = View.GONE
         swipe_refresh_layout.isRefreshing = true
-        model.load(STATIONS_ARRAY)
+        model.load(getEnabledStationNames(this))
     }
 
     private fun showWeather(weatherResponse: WeatherResponse?) {

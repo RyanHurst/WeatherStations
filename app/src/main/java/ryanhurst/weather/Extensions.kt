@@ -1,10 +1,10 @@
 package ryanhurst.weather
 
 import android.app.Activity
-import android.content.Context
 import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 
-private val STATION_PREFERENCES_KEY = "STATION_PREFERENCES_KEY"
+private const val STATION_PREFERENCES_KEY = "STATION_PREFERENCES_KEY"
 
 fun getTempString(temperatureCelsius: Double): String {
     return celsiusToFahrenheit(temperatureCelsius).toInt().toString() + "°F"
@@ -23,16 +23,24 @@ fun msToMph(ms: Double): Double {
 }
 
 private fun getPreferences(activity: Activity): SharedPreferences {
-    return activity.getPreferences(Context.MODE_PRIVATE)
+    return PreferenceManager.getDefaultSharedPreferences(activity)
 }
 
 fun getStationPreferences(activity: Activity): List<StationPreference> {
-    val activatedStations = getPreferences(activity)
-        .getStringSet(STATION_PREFERENCES_KEY, null) ?: STATIONS_ARRAY_DEFAULT.toSet()
+    val activatedStationIds = getPreferences(activity)
+        .getStringSet(STATION_PREFERENCES_KEY, null) ?: STATIONS_LIST_DEFAULT.toSet().map { it.id }
 
-    return STATIONS_ARRAY.map {
-        StationPreference(activatedStations.contains(it), it)
+    return STATIONS_LIST.map { stationName ->
+        StationPreference(
+            enabled = activatedStationIds.contains(stationName.id),
+            id = stationName.id,
+            displayableName = stationName.displayableName
+        )
     }
+}
+
+fun getEnabledStationNames(activity: Activity): List<String> {
+    return getStationPreferences(activity).filter { it.enabled }.map { it.id }
 }
 
 fun setStationPreferences(activity: Activity, stationPreferences: List<StationPreference>) {
@@ -41,7 +49,7 @@ fun setStationPreferences(activity: Activity, stationPreferences: List<StationPr
             STATION_PREFERENCES_KEY,
             stationPreferences
                 .filter { it.enabled }
-                .map { it.name }
+                .map { it.id }
                 .toSet()
         )
         .apply()
