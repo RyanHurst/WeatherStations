@@ -8,8 +8,8 @@ android {
         applicationId "ryanhurst"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 6
-        versionName "2.1"
+        versionCode 7
+        versionName "2.2"
     }
     buildTypes {
         release {
