@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/lavender</color>
-    <color name="colorPrimaryDark">@color/pink</color>
-    <color name="colorAccent">@color/yellow</color>
-
-    <color name="lavender">#717db8</color>
-    <color name="yellow">#f2ed7c</color>
-    <color name="pink">#d190b5</color>
-    <color name="aqua">#bde8d5</color>
+    <color name="colorPrimary">@color/blueLight</color>
+    <color name="colorPrimaryDark">@color/blueDark</color>
+    <color name="colorAccent">@color/purpleLight</color>
 </resources>
