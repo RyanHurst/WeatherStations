@@ -1,15 +1,16 @@
-package ryanhurst.weather
+package ryanhurst.weather.wiring
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ryanhurst.weather.data.WeatherService
 
 /**
  * Utility extension functions
  * Created by ryan on 1/9/17.
  */
-private fun createRestService() : Network {
+private fun createRestService() : WeatherService {
     val logging = HttpLoggingInterceptor()
     logging.setLevel(HttpLoggingInterceptor.Level.BODY)
     val client: OkHttpClient = OkHttpClient.Builder()
@@ -21,23 +22,7 @@ private fun createRestService() : Network {
         .client(client)
         .build()
 
-    return retrofit.create(Network::class.java)
+    return retrofit.create(WeatherService::class.java)
 }
 
-suspend fun getWeather(stations: List<String>): WeatherResponse {
-    return createRestService().getWeather(
-        stations,
-        TOKEN,
-        "120",
-        listOf(AIR_TEMP, WIND_SPEED, WIND_GUST, WIND_CARDINAL_DIRECTION)
-    )
-}
 
-suspend fun getSimpleConditions(stations: List<String>): WeatherResponse {
-    return createRestService().getWeather(
-        stations,
-        TOKEN,
-        "120",
-        listOf(AIR_TEMP, WIND_GUST)
-    )
-}

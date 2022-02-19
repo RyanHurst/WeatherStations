@@ -1,4 +1,4 @@
-package ryanhurst.weather
+package ryanhurst.weather.application
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,15 @@ import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
+import ryanhurst.weather.STATIONS_LIST
+import ryanhurst.weather.domain.StationPreference
 import ryanhurst.weather.databinding.ActivitySettingsBinding
 import ryanhurst.weather.databinding.SettingsRowBinding
+import ryanhurst.weather.domain.getStationPreferences
+import ryanhurst.weather.domain.setStationPreferences
 
+@AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
 
     val stationPreferences = ArrayList<StationPreference>()

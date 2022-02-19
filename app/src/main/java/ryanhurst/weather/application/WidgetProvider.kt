@@ -1,4 +1,4 @@
-package ryanhurst.weather
+package ryanhurst.weather.application
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -6,15 +6,26 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okio.IOException
+import ryanhurst.weather.*
+import ryanhurst.weather.data.WeatherResponse
+import ryanhurst.weather.domain.WeatherRepository
+import ryanhurst.weather.domain.getTempString
+import ryanhurst.weather.domain.getWindString
+import javax.inject.Inject
 
 /**
  * AppWidgetProvider for a basic widget that displays information about a small amount of stations
  * Created by ryan on 1/9/17.
  */
+@AndroidEntryPoint
 class WidgetProvider : AppWidgetProvider() {
+
+    @Inject
+    lateinit var weatherRepository: WeatherRepository
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
@@ -64,7 +75,7 @@ class WidgetProvider : AppWidgetProvider() {
 
         GlobalScope.launch {
             try {
-                val weatherResponse = getSimpleConditions(SHORT_STATIONS_LIST.map { it.id })
+                val weatherResponse = weatherRepository.getSimpleConditions(SHORT_STATIONS_LIST.map { it.id })
                 updateView(weatherResponse)
             } catch (e: IOException) {
                 updateView(null)

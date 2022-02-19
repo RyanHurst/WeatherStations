@@ -1,4 +1,4 @@
-package ryanhurst.weather
+package ryanhurst.weather.application
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,8 +8,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
+import ryanhurst.weather.*
+import ryanhurst.weather.data.WeatherResponse
 import ryanhurst.weather.databinding.ActivityMainBinding
 import ryanhurst.weather.databinding.WeatherRowBinding
+import ryanhurst.weather.domain.getEnabledStationNames
+import ryanhurst.weather.domain.getTempString
+import ryanhurst.weather.domain.getWindString
 
 private const val SETTINGS_REQUEST = 1337
 private const val SWIPE_TRIGGER = 600
@@ -17,6 +23,7 @@ private const val SWIPE_TRIGGER = 600
 /**
  * Main activity to display a list of station information
  */
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val model: WeatherViewModel by viewModels()
 
@@ -29,7 +36,11 @@ class MainActivity : AppCompatActivity() {
 
         model.weatherLiveData.observe(this) { showWeather(it) }
         binding.swipeRefreshLayout.setOnRefreshListener { getWeather() }
-        binding.swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorPrimary)
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.colorAccent,
+            R.color.colorPrimaryDark,
+            R.color.colorPrimary
+        )
         binding.swipeRefreshLayout.setDistanceToTriggerSync(SWIPE_TRIGGER)
         binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         savedInstanceState ?: getWeather()
@@ -75,13 +86,13 @@ class MainActivity : AppCompatActivity() {
     internal inner class WeatherAdapter(private val weatherResponse: WeatherResponse?) :
         RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherAdapter.WeatherViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
             return WeatherViewHolder(
                 WeatherRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         }
 
-        override fun onBindViewHolder(holder: WeatherAdapter.WeatherViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
             weatherResponse?.STATION?.get(position)?.let { station: WeatherResponse.Station ->
                 holder.bind(station)
             } ?: Log.e("main", "unable to bind item")

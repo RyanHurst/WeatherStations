@@ -1,4 +1,4 @@
-package ryanhurst.weather
+package ryanhurst.weather.data
 
 import java.util.ArrayList
 

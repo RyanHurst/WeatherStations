@@ -1,8 +1,10 @@
-package ryanhurst.weather
+package ryanhurst.weather.domain
 
 import android.app.Activity
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import ryanhurst.weather.STATIONS_LIST
+import ryanhurst.weather.STATIONS_LIST_DEFAULT
 
 private const val STATION_PREFERENCES_KEY = "STATION_PREFERENCES_KEY"
 

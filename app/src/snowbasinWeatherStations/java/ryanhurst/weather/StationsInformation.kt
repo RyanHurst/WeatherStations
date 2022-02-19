@@ -1,5 +1,7 @@
 package ryanhurst.weather
 
+import ryanhurst.weather.data.StationName
+
 /**
  * Station information for Snowbasin
  * Created by ryan on 2/20/17.

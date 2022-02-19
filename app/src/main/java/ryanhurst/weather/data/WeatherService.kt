@@ -1,4 +1,4 @@
-package ryanhurst.weather
+package ryanhurst.weather.data
 
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,7 +13,7 @@ const val WIND_GUST = "wind_gust"
 const val WIND_DIRECTION = "wind_direction"
 const val WIND_CARDINAL_DIRECTION = "wind_cardinal_direction"
 
-interface Network {
+interface WeatherService {
     @GET("stations/nearesttime")
     suspend fun getWeather(
         @Query("stid") stid: List<String>,

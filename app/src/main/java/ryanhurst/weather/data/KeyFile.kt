@@ -1,4 +1,4 @@
-package ryanhurst.weather
+package ryanhurst.weather.data
 
 /**
  * File to hold TOKEN
