@@ -10,11 +10,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okio.IOException
-import ryanhurst.weather.*
-import ryanhurst.weather.data.WeatherResponse
+import ryanhurst.weather.R
+import ryanhurst.weather.SHORT_STATIONS_LIST
+import ryanhurst.weather.domain.StationObservation
 import ryanhurst.weather.domain.WeatherRepository
-import ryanhurst.weather.domain.getTempString
-import ryanhurst.weather.domain.getWindString
 import javax.inject.Inject
 
 /**
@@ -27,7 +26,11 @@ class WidgetProvider : AppWidgetProvider() {
     @Inject
     lateinit var weatherRepository: WeatherRepository
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
         val appWidgetId = appWidgetIds[0]
@@ -46,26 +49,18 @@ class WidgetProvider : AppWidgetProvider() {
         views.setOnClickPendingIntent(R.id.widget_container, pendingIntent)
 
 
-        fun updateView(response: WeatherResponse?) {
-            if (response?.STATION != null && response.STATION.size > 0) {
-                var station: WeatherResponse.Station = response.STATION[0]
-                views.setTextViewText(R.id.name_1, station.NAME)
-                station.OBSERVATIONS?.air_temp_value_1?.value?.let {
-                    views.setTextViewText(R.id.temperature_1, getTempString(it))
-                }
-                station.OBSERVATIONS?.wind_gust_value_1?.value?.let {
-                    views.setTextViewText(R.id.wind_gust_1, getWindString(it))
+        fun updateView(stationObservations: List<StationObservation>) {
+            if (stationObservations.isNotEmpty()) {
+                stationObservations.first().let { stationObservation ->
+                    views.setTextViewText(R.id.name_1, stationObservation.name)
+                    views.setTextViewText(R.id.temperature_1, stationObservation.airTemperature)
+                    views.setTextViewText(R.id.wind_gust_1, stationObservation.windGust)
                 }
 
-                if (response.STATION.size > 1) {
-                    station = response.STATION[1]
-                    views.setTextViewText(R.id.name_2, station.NAME)
-                    station.OBSERVATIONS?.air_temp_value_1?.value?.let {
-                        views.setTextViewText(R.id.temperature_2, getTempString(it))
-                    }
-                    station.OBSERVATIONS?.wind_gust_value_1?.value?.let {
-                        views.setTextViewText(R.id.wind_gust_2, getWindString(it))
-                    }
+                stationObservations.getOrNull(1)?.let { station ->
+                    views.setTextViewText(R.id.name_2, station.name)
+                    views.setTextViewText(R.id.temperature_2, station.airTemperature)
+                    views.setTextViewText(R.id.wind_gust_2, station.windGust)
                 }
 
                 // Tell the AppWidgetManager to perform an update on the current app widget
@@ -75,10 +70,11 @@ class WidgetProvider : AppWidgetProvider() {
 
         GlobalScope.launch {
             try {
-                val weatherResponse = weatherRepository.getSimpleConditions(SHORT_STATIONS_LIST.map { it.id })
+                val weatherResponse =
+                    weatherRepository.getSimpleConditions(SHORT_STATIONS_LIST.map { it.id })
                 updateView(weatherResponse)
             } catch (e: IOException) {
-                updateView(null)
+                updateView(emptyList())
             }
         }
     }

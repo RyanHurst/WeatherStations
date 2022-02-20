@@ -12,8 +12,6 @@ import ryanhurst.weather.STATIONS_LIST
 import ryanhurst.weather.domain.StationPreference
 import ryanhurst.weather.databinding.ActivitySettingsBinding
 import ryanhurst.weather.databinding.SettingsRowBinding
-import ryanhurst.weather.domain.getStationPreferences
-import ryanhurst.weather.domain.setStationPreferences
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
@@ -26,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        stationPreferences.addAll(getStationPreferences(this))
+        stationPreferences.addAll(getStationPreferences())
         binding.settingsRecycler.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.settingsRecycler.adapter = SettingsAdapter()
@@ -57,7 +55,7 @@ class SettingsActivity : AppCompatActivity() {
             binding.stationBox.setOnClickListener {
                 station?.enabled = (it as CompoundButton).isChecked
                 setResult(RESULT_OK)
-                setStationPreferences(this@SettingsActivity, stationPreferences)
+                setStationPreferences(stationPreferences)
             }
         }
 

@@ -1,6 +1,6 @@
 package ryanhurst.weather
 
-import ryanhurst.weather.data.StationName
+import ryanhurst.weather.domain.StationName
 
 /**
  * Station information for Snowbasin

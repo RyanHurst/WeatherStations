@@ -2,20 +2,20 @@ package ryanhurst.weather.application
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import ryanhurst.weather.*
-import ryanhurst.weather.data.WeatherResponse
 import ryanhurst.weather.databinding.ActivityMainBinding
 import ryanhurst.weather.databinding.WeatherRowBinding
-import ryanhurst.weather.domain.getEnabledStationNames
-import ryanhurst.weather.domain.getTempString
-import ryanhurst.weather.domain.getWindString
+import ryanhurst.weather.domain.StationObservation
+import ryanhurst.weather.domain.WeatherViewState
 
 private const val SETTINGS_REQUEST = 1337
 private const val SWIPE_TRIGGER = 600
@@ -25,7 +25,7 @@ private const val SWIPE_TRIGGER = 600
  */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val model: WeatherViewModel by viewModels()
+    private val viewModel: WeatherViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
 
@@ -34,7 +34,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        model.weatherLiveData.observe(this) { showWeather(it) }
+        lifecycleScope.launchWhenStarted {
+            viewModel.weatherViewState.collect {
+                showWeather(it)
+            }
+        }
         binding.swipeRefreshLayout.setOnRefreshListener { getWeather() }
         binding.swipeRefreshLayout.setColorSchemeResources(
             R.color.colorAccent,
@@ -74,16 +78,16 @@ class MainActivity : AppCompatActivity() {
     private fun getWeather() {
         binding.emptyTextView.visibility = View.GONE
         binding.swipeRefreshLayout.isRefreshing = true
-        model.load(getEnabledStationNames(this))
+        viewModel.load(getEnabledStationNames())
     }
 
-    private fun showWeather(weatherResponse: WeatherResponse?) {
-        binding.swipeRefreshLayout.isRefreshing = false
-        binding.emptyTextView.visibility = if (weatherResponse?.STATION.isNullOrEmpty()) View.VISIBLE else View.GONE
-        binding.recyclerView.adapter = WeatherAdapter(weatherResponse)
+    private fun showWeather(viewState: WeatherViewState) {
+        binding.swipeRefreshLayout.isRefreshing = viewState is WeatherViewState.Loading
+        binding.emptyTextView.isVisible = viewState is WeatherViewState.Error
+        binding.recyclerView.adapter = WeatherAdapter(viewState.stationObservations)
     }
 
-    internal inner class WeatherAdapter(private val weatherResponse: WeatherResponse?) :
+    internal inner class WeatherAdapter(private val stationObservations: List<StationObservation>) :
         RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
@@ -93,40 +97,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
-            weatherResponse?.STATION?.get(position)?.let { station: WeatherResponse.Station ->
-                holder.bind(station)
-            } ?: Log.e("main", "unable to bind item")
+            holder.bind(stationObservations[position])
         }
 
         override fun getItemCount(): Int {
-            return weatherResponse?.STATION?.size ?: 0
+            return stationObservations.size
         }
 
-        internal inner class WeatherViewHolder(private val binding: WeatherRowBinding) : RecyclerView.ViewHolder(binding.root) {
-            fun bind(station: WeatherResponse.Station) {
-                binding.textName.text = station.NAME
-                val elevationString = "${station.ELEVATION}'"
-                binding.textElevation.text = elevationString
-                binding.textTemperature.text = station.OBSERVATIONS?.air_temp_value_1?.value?.let {
-                    getTempString(it)
-                }
-
-                if (station.OBSERVATIONS?.wind_speed_value_1?.value != null) {
-                    var windString = station.OBSERVATIONS.wind_cardinal_direction_value_1d?.value ?: ""
-                    windString += " " + getWindString(station.OBSERVATIONS.wind_speed_value_1.value)
-                    binding.textWindSpeed.text = windString
-                    binding.windSpeedContainer.visibility = View.VISIBLE
-                } else {
-                    binding.windSpeedContainer.visibility = View.GONE
-                }
-
-                if (station.OBSERVATIONS?.wind_gust_value_1?.value != null) {
-                    val gustString = getWindString(station.OBSERVATIONS.wind_gust_value_1.value)
-                    binding.textWindGust.text = gustString
-                    binding.windGustContainer.visibility = View.VISIBLE
-                } else {
-                    binding.windGustContainer.visibility = View.GONE
-                }
+        internal inner class WeatherViewHolder(private val binding: WeatherRowBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bind(station: StationObservation) {
+                binding.textName.text = station.name
+                binding.textElevation.text = station.elevation
+                binding.textTemperature.text = station.airTemperature
+                binding.textWindSpeed.text = "${station.windDirection} ${station.windSpeed}"
+                binding.windSpeedContainer.isVisible = station.windSpeed.isNotBlank()
+                binding.textWindGust.text = station.windGust
+                binding.windGustContainer.isVisible = station.windGust.isNotBlank()
             }
         }
     }

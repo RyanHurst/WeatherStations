@@ -1,19 +1,23 @@
 package ryanhurst.weather.domain
 
-import ryanhurst.weather.data.WeatherResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import javax.inject.Inject
 
-
 class LoadConditionsUseCase @Inject constructor(private val weatherRepository: WeatherRepository) {
-    suspend operator fun invoke(stations: List<String>): WeatherResponse? {
-        return if (stations.isEmpty()) {
-            null
+
+    fun loadConditions(stations: List<String>): Flow<WeatherViewState> = flow {
+        if (stations.isEmpty()) {
+            emit(WeatherViewState.Error.NoStationsError)
         } else {
+            emit(WeatherViewState.Loading)
             try {
-                weatherRepository.getWeather(stations)
+                emit(WeatherViewState.Success(weatherRepository.getWeather(stations)))
             } catch (e: IOException) {
-                null
+                emit(WeatherViewState.Error.NoInternetError)
+            } catch (e: Exception) {
+                emit(WeatherViewState.Error.UnknownError)
             }
         }
     }

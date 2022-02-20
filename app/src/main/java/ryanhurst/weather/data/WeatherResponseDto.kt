@@ -1,12 +1,14 @@
 package ryanhurst.weather.data
 
-import java.util.ArrayList
+import ryanhurst.weather.domain.StationObservation
+import ryanhurst.weather.domain.toTemperatureString
+import ryanhurst.weather.domain.toWindString
 
 /**
  * WeatherResponse object. Holds station data
  * Created by ryan on 1/8/17.
  */
-class WeatherResponse {
+class WeatherResponseDto {
 
     val STATION: ArrayList<Station>? = null
     val UNITS: Unit? = null
@@ -52,4 +54,16 @@ class WeatherResponse {
         }
     }
 
+    fun toStationObservations(): List<StationObservation> {
+        return STATION!!.map { station ->
+            StationObservation(
+                elevation = station.ELEVATION ?: "",
+                name = station.NAME ?: "",
+                airTemperature = station.OBSERVATIONS?.air_temp_value_1?.value?.toTemperatureString() ?: "",
+                windSpeed = station.OBSERVATIONS?.wind_speed_value_1?.value?.toWindString() ?: "",
+                windGust = station.OBSERVATIONS?.wind_gust_value_1?.value?.toWindString() ?: "",
+                windDirection = station.OBSERVATIONS?.wind_cardinal_direction_value_1d?.value ?: "",
+            )
+        }
+    }
 }

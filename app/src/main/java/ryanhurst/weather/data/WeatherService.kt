@@ -19,5 +19,5 @@ interface WeatherService {
         @Query("stid") stid: List<String>,
         @Query("token") token: String, @Query("within") within: String,
         @Query("vars") vars: List<String>
-    ): WeatherResponse
+    ): WeatherResponseDto
 }
