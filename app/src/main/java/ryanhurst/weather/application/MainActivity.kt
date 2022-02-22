@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     private fun getWeather() {
         binding.emptyTextView.visibility = View.GONE
         binding.swipeRefreshLayout.isRefreshing = true
-        viewModel.load(getEnabledStationNames())
+        viewModel.load()
     }
 
     private fun showWeather(viewState: WeatherViewState) {
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 binding.textName.text = station.name
                 binding.textElevation.text = station.elevation
                 binding.textTemperature.text = station.airTemperature
-                binding.textWindSpeed.text = "${station.windDirection} ${station.windSpeed}"
+                binding.textWindSpeed.text = getString(R.string.wind_speed_template, station.windDirection, station.windSpeed)
                 binding.windSpeedContainer.isVisible = station.windSpeed.isNotBlank()
                 binding.textWindGust.text = station.windGust
                 binding.windGustContainer.isVisible = station.windGust.isNotBlank()

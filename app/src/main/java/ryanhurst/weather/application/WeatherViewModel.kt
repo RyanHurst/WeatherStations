@@ -14,8 +14,8 @@ import javax.inject.Inject
 class WeatherViewModel @Inject constructor(private val loadConditionsUseCase: LoadConditionsUseCase) :
     ViewModel() {
     val weatherViewState = MutableStateFlow<WeatherViewState>(WeatherViewState.Success(emptyList()))
-    fun load(stations: List<String>) {
-        loadConditionsUseCase.loadConditions(stations).onEach {
+    fun load() {
+        loadConditionsUseCase.loadConditions().onEach {
             weatherViewState.emit(it)
         }.launchIn(viewModelScope)
     }

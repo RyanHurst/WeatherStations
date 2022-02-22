@@ -5,13 +5,17 @@ import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import javax.inject.Inject
 
-class LoadConditionsUseCase @Inject constructor(private val weatherRepository: WeatherRepository) {
+class LoadConditionsUseCase @Inject constructor(
+    private val weatherRepository: WeatherRepository,
+    private val settingsRepository: SettingsRepository,
+) {
 
-    fun loadConditions(stations: List<String>): Flow<WeatherViewState> = flow {
+    fun loadConditions(): Flow<WeatherViewState> = flow {
+        emit(WeatherViewState.Loading)
+        val stations = settingsRepository.getStationSettings().filter { it.enabled }.map { it.id }
         if (stations.isEmpty()) {
             emit(WeatherViewState.Error.NoStationsError)
         } else {
-            emit(WeatherViewState.Loading)
             try {
                 emit(WeatherViewState.Success(weatherRepository.getWeather(stations)))
             } catch (e: IOException) {
