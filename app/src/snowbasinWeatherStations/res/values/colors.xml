@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/purpleLight</color>
+    <color name="colorPrimaryDark">@color/purpleDark</color>
+    <color name="colorAccent">@color/aqua</color>
+</resources>

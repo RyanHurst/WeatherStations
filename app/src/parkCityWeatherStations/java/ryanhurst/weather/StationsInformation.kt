@@ -1,5 +1,7 @@
 package ryanhurst.weather
 
+import ryanhurst.weather.domain.StationName
+
 /**
  * Station information for Park City
  * Created by ryan on 1/9/17.

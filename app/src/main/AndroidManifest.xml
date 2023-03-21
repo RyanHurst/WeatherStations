@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ryanhurst.weather">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".application.WeatherApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".application.WeatherApplication"
         android:theme="@style/AppTheme">
         <activity
             android:name=".application.SettingsActivity"
             android:description="@string/settings"
-            android:label="@string/settings" />
+            android:exported="true"
+            android:label="@string/enabled_stations" />
+
         <activity
             android:name=".application.MainActivity"
             android:exported="true">

@@ -17,7 +17,8 @@ interface WeatherService {
     @GET("stations/nearesttime")
     suspend fun getWeather(
         @Query("stid") stid: List<String>,
-        @Query("token") token: String, @Query("within") within: String,
+        @Query("token") token: String,
+        @Query("within") within: String,
         @Query("vars") vars: List<String>
     ): WeatherResponseDto
 }

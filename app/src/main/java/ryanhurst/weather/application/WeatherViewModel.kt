@@ -11,12 +11,29 @@ import ryanhurst.weather.domain.WeatherViewState
 import javax.inject.Inject
 
 @HiltViewModel
-class WeatherViewModel @Inject constructor(private val loadConditionsUseCase: LoadConditionsUseCase) :
-    ViewModel() {
+class WeatherViewModel @Inject constructor(
+    private val loadConditionsUseCase: LoadConditionsUseCase
+) : ViewModel() {
+
     val weatherViewState = MutableStateFlow<WeatherViewState>(WeatherViewState.Success(emptyList()))
-    fun load() {
-        loadConditionsUseCase.loadConditions().onEach {
-            weatherViewState.emit(it)
-        }.launchIn(viewModelScope)
+
+    fun onSettingsChanged() {
+        load(true)
+    }
+
+    fun onCreate() {
+        load(false)
+    }
+
+    fun onRefresh() {
+        load(true)
+    }
+
+    private fun load(forceRefresh: Boolean) {
+        if (weatherViewState.value.stationObservations.isEmpty() || forceRefresh) {
+            loadConditionsUseCase.loadConditions().onEach {
+                weatherViewState.emit(it)
+            }.launchIn(viewModelScope)
+        }
     }
 }
